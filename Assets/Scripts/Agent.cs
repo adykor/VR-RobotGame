@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour
 {
-    private State currentState;
+    protected State currentState;
 
     public enum State
     {
@@ -30,11 +30,11 @@ public class Agent : MonoBehaviour
         OnStateEntered(currentState);
     }
 
-    private void OnStateEntered(State state)
+    protected virtual void OnStateEntered(State state)
     {
     }
 
-    private void OnStateLeft(State state)
+    protected virtual void OnStateLeft(State state)
     {
     }
 }
