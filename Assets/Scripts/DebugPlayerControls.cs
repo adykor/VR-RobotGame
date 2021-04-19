@@ -26,9 +26,11 @@ public class DebugPlayerControls : MonoBehaviour
             if(Physics.Raycast(ray, out var hit))
         {
             // If the object that was clicked is "walkable" 
-            // Set the player's destinatoin to the point we clicked
+            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Walkable")){
 
+                // Set the player's destinatoin to the point we clicked
+                navAgent.SetDestination(hit.point);
+            }
         }
-
     }
 }
