@@ -4,7 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Robot : Agent
+
 {
+    public Transform headBone;
+    public Transform player;
+
     private void Start()
     {
         // Start in the idle state
@@ -69,9 +73,21 @@ public class Robot : Agent
 
     private void IdleUpdate()
     {
+        // Calculate the direction from the robot's head to the player
+        var playerDirection = (player.position - headBone.position).normalized;
 
+        // Raycast to the player
+        if(Physics.Raycast(headBone.position, playerDirection, out var hit))
+        {
+            // If the player was the thing we hit
+            if(hit.collider.gameObject.name == "Player")
+            {
+
+            }
+                // Go to the detecting player state
+        }
     }
-    private void DetectingPlayerUpdate()
+    private void DetectingPlayerUpdate() 
     {
 
     }
