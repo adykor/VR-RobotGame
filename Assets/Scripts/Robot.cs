@@ -69,18 +69,14 @@ public class Robot : Agent
 
     private void IdleUpdate()
     {
-        throw new NotImplementedException();
+
     }
     private void DetectingPlayerUpdate()
     {
-        throw new NotImplementedException();
+
     }
     private void ChasingPlayerUpdate()
     {
-        throw new NotImplementedException();
+
     }
-
-   
-
-    
 }
