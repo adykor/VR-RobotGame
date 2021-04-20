@@ -80,11 +80,11 @@ public class Robot : Agent
         if(Physics.Raycast(headBone.position, playerDirection, out var hit))
         {
             // If the player was the thing we hit
-            if(hit.collider.gameObject.name == "Player")
+            if (hit.collider.gameObject.CompareTag("Player"))
             {
-
-            }
                 // Go to the detecting player state
+                GotoState(State.DetectingPlayer);
+            }
         }
     }
     private void DetectingPlayerUpdate() 
