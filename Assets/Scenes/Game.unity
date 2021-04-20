@@ -1333,6 +1333,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -0.467, y: -82.52901, z: 0}
+--- !u!4 &1707243786534203865 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 909608661022031149, guid: d6823a4a659b9b44f9611288d739df23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1958728767623597300}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1958728767623597300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1427,5 +1433,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateText: {fileID: 1939044250}
-  headBone: {fileID: 0}
-  player: {fileID: 0}
+  headBone: {fileID: 1707243786534203865}
+  player: {fileID: 990571053}
