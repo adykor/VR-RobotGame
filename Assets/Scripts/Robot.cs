@@ -12,6 +12,7 @@ public class Robot : Agent
     public GameObject detectionIndicator;
     public float detectionTime;
     public TMP_Text detectionIndicatorText;
+    public float fieldOfView;
 
     private Animator animator;
     private float timeLeftUntilDetected;
@@ -104,12 +105,17 @@ public class Robot : Agent
 
         if (Physics.Raycast(headBone.position, playerDirection, out var hit))
         {
-            // If the player was the thing we hit
-            return hit.collider.gameObject.CompareTag("Player");
+            // Is the player within the robot's field of view
+            var angleToPlayer = Vector3.Angle(transform.forward, playerDirection);
+            if(angleToPlayer >= -(fieldOfView / 2f) && angleToPlayer <= (fieldOfView / 2f))
+            {
+                // If the player was the thing we hit
+                return hit.collider.gameObject.CompareTag("Player");
+            }
         }
 
         // TODO: Why is this not false?!
-        return true;
+        return false;
     }
 
     private void DetectingPlayerUpdate() 
