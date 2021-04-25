@@ -22,7 +22,7 @@ public class Robot : Agent
     private float timeLeftUntilDetected;
     private Vector3 lastKnownPlayerLocation;
     private float timeLeftUntilReturnHome;
-    
+    private Vector3 homePosition;
 
     private void Start()
     {
@@ -31,6 +31,9 @@ public class Robot : Agent
 
         // Start in the idle state
         GotoState(State.Idle);
+
+        // Set the robot's home location
+        homePosition = transform.position;
     }
 
     protected override void OnStateEntered(State state)
@@ -41,8 +44,12 @@ public class Robot : Agent
         switch (state)
         {
             case State.Idle:
+                // Stop the walking animation
+                animator.SetBool("Walking", false);
                 break;
             case State.DetectingPlayer:
+                // TODO: Have the robot look at the player with their head
+
                 // Show the detection indicator above the robot's head
                 detectionIndicator.SetActive(true);
 
@@ -67,6 +74,13 @@ public class Robot : Agent
                 // Start the return home countdown
                 timeLeftUntilReturnHome = returnHomeTime;
                 break;
+            case State.ReturningHome:
+                // Play the walking animation
+                animator.SetBool("Walking", true);
+
+                // Move back home
+                navAgent.SetDestination(homePosition);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
@@ -89,6 +103,8 @@ public class Robot : Agent
             case State.MoveToLastKnownPlayerPosition:
                 break;
             case State.LookingForPlayer:
+                break;
+            case State.ReturningHome:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -114,6 +130,9 @@ public class Robot : Agent
                 break;
             case State.LookingForPlayer:
                 LookingForPlayerUpdate();
+                break;
+            case State.ReturningHome:
+                ReturningHomeUpdate();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(currentState), currentState, null);
@@ -221,6 +240,23 @@ public class Robot : Agent
         }
 
         // If the robot sees the player again
+        if (CanSeePlayer())
+        {
+            // Resume the chase
+            GotoState(State.ChasingPlayer);
+        }
+    }
+
+    private void ReturningHomeUpdate()
+    {
+        // If we reached the robot's home position
+        if (navAgent.remainingDistance <= stoppedDistance)
+        {
+            // Go to idle state
+            GotoState(State.Idle);
+        }
+
+        // If the player was spotted again
         if (CanSeePlayer())
         {
             // Resume the chase
