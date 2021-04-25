@@ -89,20 +89,29 @@ public class Robot : Agent
 
     private void IdleUpdate()
     {
+        // Can the robot see the player
+        if(CanSeePlayer())
+        {
+            // Go to the detecting player state
+            GotoState(State.DetectingPlayer);
+        }
+    }
+
+    private bool CanSeePlayer()
+    {
         // Calculate the direction from the robot's head to the player
         var playerDirection = (player.position - headBone.position).normalized;
 
-        // Raycast to the player
-        if(Physics.Raycast(headBone.position, playerDirection, out var hit))
+        if (Physics.Raycast(headBone.position, playerDirection, out var hit))
         {
             // If the player was the thing we hit
-            if (hit.collider.gameObject.CompareTag("Player"))
-            {
-                // Go to the detecting player state
-                GotoState(State.DetectingPlayer);
-            }
+            return hit.collider.gameObject.CompareTag("Player");
         }
+
+        // TODO: Why is this not false?!
+        return true;
     }
+
     private void DetectingPlayerUpdate() 
     {
         // Coundown the detection time
@@ -117,6 +126,13 @@ public class Robot : Agent
         {
             // Go to the chasing state
             GotoState(State.ChasingPlayer);
+        }
+
+        // If the robot lost sight of the player
+        if(!CanSeePlayer())
+        {
+            // Go back to the idle state
+            GotoState(State.Idle);
         }
     }
     private void ChasingPlayerUpdate()
