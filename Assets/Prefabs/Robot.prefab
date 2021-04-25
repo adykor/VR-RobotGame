@@ -1801,6 +1801,7 @@ MonoBehaviour:
   detectionTime: 3
   detectionIndicatorText: {fileID: 2118674062}
   fieldOfView: 90
+  stoppedDistance: 0.1
 --- !u!195 &8823015025067849351
 NavMeshAgent:
   m_ObjectHideFlags: 0

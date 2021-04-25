@@ -14,11 +14,15 @@ public class Robot : Agent
     public float detectionTime;
     public TMP_Text detectionIndicatorText;
     public float fieldOfView;
+    public float stoppedDistance;
+    public float returnHomeTime;
 
     private Animator animator;
     private NavMeshAgent navAgent;
     private float timeLeftUntilDetected;
     private Vector3 lastKnownPlayerLocation;
+    private float timeLeftUntilReturnHome;
+    
 
     private void Start()
     {
@@ -56,6 +60,13 @@ public class Robot : Agent
                 // Move to the player's last known location
                 navAgent.SetDestination(lastKnownPlayerLocation);
                 break;
+            case State.LookingForPlayer:
+                // Stop the walking animation
+                animator.SetBool("Walking", false);
+
+                // Start the return home countdown
+                timeLeftUntilReturnHome = returnHomeTime;
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
@@ -76,6 +87,8 @@ public class Robot : Agent
             case State.ChasingPlayer:
                 break;
             case State.MoveToLastKnownPlayerPosition:
+                break;
+            case State.LookingForPlayer:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -98,6 +111,9 @@ public class Robot : Agent
                 break;
             case State.MoveToLastKnownPlayerPosition:
                 MoveToLastKnownPlayerPositionUpdate();
+                break;
+            case State.LookingForPlayer:
+                LookingForPlayerUpdate();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(currentState), currentState, null);
@@ -177,6 +193,38 @@ public class Robot : Agent
 
     private void MoveToLastKnownPlayerPositionUpdate()
     {
-        
+        // If we reached the player's last known position
+        if(navAgent.remainingDistance <= stoppedDistance)
+        {
+            // Go to the looking around for player state
+            GotoState(State.LookingForPlayer);
+        }
+
+        // If the player was spotted again
+        if (CanSeePlayer())
+        {
+            // Resume the chase
+            GotoState(State.ChasingPlayer);
+        }
+    }
+
+    private void LookingForPlayerUpdate()
+    {
+        // Coundown the return home time
+        timeLeftUntilReturnHome -= Time.deltaTime;
+
+        // If the robot is totally bored now
+        if (timeLeftUntilReturnHome <= 0)
+        {
+            // Go to the returning home state
+            GotoState(State.ReturningHome);
+        }
+
+        // If the robot sees the player again
+        if (CanSeePlayer())
+        {
+            // Resume the chase
+            GotoState(State.ChasingPlayer);
+        }
     }
 }
