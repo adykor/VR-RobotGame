@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance; // can be called singleton
-    public Artifact[] artifacts;
 
     private void Awake()
     {
@@ -16,19 +16,26 @@ public class GameManager : MonoBehaviour
             // Error
             Debug.LogError("There was more than 1 GameManager");
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        else
+        {
+            instance = this;
+        }
     }
 
     internal static void OnArtifactStashed()
     {
+        // If all of the artifacts are stashed
+        if(FindObjectOfType<Artifact>().All(artifact => artifact.stashed))
+        {
+            // You win
+            GameOver();
+        }
 
-        // Loop through all the artifacts
-            // If all artifacts are stashed
-                // You win!
+    }
+
+    private static void GameOver()
+    {
+        // TODO: Add some fanfare!
+        Debug.Log("You win :|");
     }
 }

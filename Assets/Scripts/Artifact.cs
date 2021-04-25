@@ -30,4 +30,9 @@ public class Artifact : MonoBehaviour
         rigidBody.useGravity = true;
         transform.SetParent(null);
     }
+
+    internal bool All(object isArtifactStashed)
+    {
+        throw new NotImplementedException();
+    }
 }
