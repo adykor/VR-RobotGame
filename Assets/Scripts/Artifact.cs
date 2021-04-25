@@ -6,6 +6,7 @@ using UnityEngine;
 public class Artifact : MonoBehaviour
 {
     private Rigidbody rigidBody;
+    internal bool stashed;
 
     private void Start()
     {
