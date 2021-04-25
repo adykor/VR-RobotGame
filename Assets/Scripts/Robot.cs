@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Robot : Agent
 
@@ -15,11 +16,13 @@ public class Robot : Agent
     public float fieldOfView;
 
     private Animator animator;
+    private NavMeshAgent navAgent;
     private float timeLeftUntilDetected;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
+        navAgent = GetComponent<NavMeshAgent>();
 
         // Start in the idle state
         GotoState(State.Idle);
@@ -81,6 +84,8 @@ public class Robot : Agent
                 DetectingPlayerUpdate();
                 break;
             case State.ChasingPlayer:
+                // Play the walking animation
+
                 ChasingPlayerUpdate();
                 break;
             default:
@@ -143,6 +148,7 @@ public class Robot : Agent
     }
     private void ChasingPlayerUpdate()
     {
-
+        // Set the robot's destination to the player's position 
+        navAgent.SetDestination(player.position);
     }
 }
