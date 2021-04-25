@@ -526,6 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec7cde7ec4203a44fae5ce11c12f0cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hands: {fileID: 0}
 --- !u!1 &1078145393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1229,6 +1230,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Artifact
+      objectReference: {fileID: 0}
+    - target: {fileID: 704552101353755520, guid: 57af75d1743f95245a134151d755f5d0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 704552101353755532, guid: 57af75d1743f95245a134151d755f5d0,
         type: 3}
