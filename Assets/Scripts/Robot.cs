@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Robot : Agent
@@ -8,9 +9,17 @@ public class Robot : Agent
 {
     public Transform headBone;
     public Transform player;
+    public GameObject detectionIndicator;
+    public float detectionTime;
+    public TMP_Text detectionIndicatorText;
+
+    private Animator animator;
+    private float timeLeftUntilDetected;
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
+
         // Start in the idle state
         GotoState(State.Idle);
     }
@@ -23,12 +32,17 @@ public class Robot : Agent
         switch (state)
         {
             case State.Idle:
-                // Play the idle animation
                 break;
             case State.DetectingPlayer:
                 // Show the detection indicator above the robot's head
+                detectionIndicator.SetActive(true);
+
+                // Start the detection countdown
+                timeLeftUntilDetected = detectionTime;
                 break;
             case State.ChasingPlayer:
+                // Play the walking animation
+                animator.SetBool("Walking", true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -44,6 +58,8 @@ public class Robot : Agent
             case State.Idle:
                 break;
             case State.DetectingPlayer:
+                // Hide the detection indicator above the robot's head
+                detectionIndicator.SetActive(false);
                 break;
             case State.ChasingPlayer:
                 break;
@@ -89,7 +105,19 @@ public class Robot : Agent
     }
     private void DetectingPlayerUpdate() 
     {
+        // Coundown the detection time
+        timeLeftUntilDetected -= Time.deltaTime;
 
+        // Update detection indicator
+        var percent = 1f - (timeLeftUntilDetected / detectionTime);
+        detectionIndicatorText.text = $"{percent * 100f:F0}%";
+
+        // If the player has been fully detected
+        if(timeLeftUntilDetected <= 0)
+        {
+            // Go to the chasing state
+            GotoState(State.ChasingPlayer);
+        }
     }
     private void ChasingPlayerUpdate()
     {
