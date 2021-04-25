@@ -12,7 +12,8 @@ public class Agent : MonoBehaviour
         None,
         Idle,
         DetectingPlayer,
-        ChasingPlayer
+        ChasingPlayer,
+        MoveToLastKnownPlayerPosition
     }
 
     protected void GotoState(State newState)

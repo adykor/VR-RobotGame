@@ -18,6 +18,7 @@ public class Robot : Agent
     private Animator animator;
     private NavMeshAgent navAgent;
     private float timeLeftUntilDetected;
+    private Vector3 lastKnownPlayerLocation;
 
     private void Start()
     {
@@ -150,5 +151,15 @@ public class Robot : Agent
     {
         // Set the robot's destination to the player's position 
         navAgent.SetDestination(player.position);
+
+        // If the robot loses sight of the player
+        if(!CanSeePlayer())
+        {
+            // Store the last known location of the player
+            lastKnownPlayerLocation = player.position;
+
+            // Go to the player's last known location state
+            GotoState(State.MoveToLastKnownPlayerPosition);
+        }
     }
 }
