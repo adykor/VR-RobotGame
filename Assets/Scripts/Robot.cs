@@ -49,6 +49,13 @@ public class Robot : Agent
                 // Play the walking animation
                 animator.SetBool("Walking", true);
                 break;
+            case State.MoveToLastKnownPlayerPosition:
+                // Play the walking animation
+                animator.SetBool("Walking", true);
+
+                // Move to the player's last known location
+                navAgent.SetDestination(lastKnownPlayerLocation);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
@@ -68,6 +75,8 @@ public class Robot : Agent
                 break;
             case State.ChasingPlayer:
                 break;
+            case State.MoveToLastKnownPlayerPosition:
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
@@ -85,9 +94,10 @@ public class Robot : Agent
                 DetectingPlayerUpdate();
                 break;
             case State.ChasingPlayer:
-                // Play the walking animation
-
                 ChasingPlayerUpdate();
+                break;
+            case State.MoveToLastKnownPlayerPosition:
+                MoveToLastKnownPlayerPositionUpdate();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(currentState), currentState, null);
@@ -152,6 +162,8 @@ public class Robot : Agent
         // Set the robot's destination to the player's position 
         navAgent.SetDestination(player.position);
 
+        // TODO: What do we do if we catch the player while in the ChasingPlayer state?
+
         // If the robot loses sight of the player
         if(!CanSeePlayer())
         {
@@ -161,5 +173,10 @@ public class Robot : Agent
             // Go to the player's last known location state
             GotoState(State.MoveToLastKnownPlayerPosition);
         }
+    }
+
+    private void MoveToLastKnownPlayerPositionUpdate()
+    {
+        
     }
 }
