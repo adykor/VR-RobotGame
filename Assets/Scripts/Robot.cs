@@ -358,6 +358,9 @@ public class Robot : Agent
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (currentState == State.GrabbingArtifact)
+            return;
+
         // If the thing we touched is an artifact
         var artifact = collision.collider.GetComponent<Artifact>();
         if (artifact != null && !artifact.stashed)
@@ -368,6 +371,10 @@ public class Robot : Agent
             // Store the artifact the player is carrying
             heldArtifact = artifact;
             targetArtifact = null;
+
+            // Go to the returning artifact state
+            GotoState(State.ReturningArtifact);
+            return;
         }
     }
 }

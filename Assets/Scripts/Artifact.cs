@@ -7,6 +7,7 @@ public class Artifact : MonoBehaviour
 {
     private Rigidbody rigidBody;
     internal bool stashed;
+    internal Vector3 homePosition;
 
     private void Start()
     {
