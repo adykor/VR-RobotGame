@@ -23,6 +23,7 @@ public class Robot : Agent
     private Vector3 lastKnownPlayerLocation;
     private float timeLeftUntilReturnHome;
     private Vector3 homePosition;
+    private bool playerDetected;
 
     private void Start()
     {
@@ -46,6 +47,7 @@ public class Robot : Agent
             case State.Idle:
                 // Stop the walking animation
                 animator.SetBool("Walking", false);
+
                 break;
             case State.DetectingPlayer:
                 // TODO: Have the robot look at the player with their head
@@ -139,16 +141,6 @@ public class Robot : Agent
         }
     }
 
-    private void IdleUpdate()
-    {
-        // Can the robot see the player
-        if(CanSeePlayer())
-        {
-            // Go to the detecting player state
-            GotoState(State.DetectingPlayer);
-        }
-    }
-
     private bool CanSeePlayer()
     {
         // Calculate the direction from the robot's head to the player
@@ -158,7 +150,7 @@ public class Robot : Agent
         {
             // Is the player within the robot's field of view
             var angleToPlayer = Vector3.Angle(transform.forward, playerDirection);
-            if(angleToPlayer >= -(fieldOfView / 2f) && angleToPlayer <= (fieldOfView / 2f))
+            if (angleToPlayer >= -(fieldOfView / 2f) && angleToPlayer <= (fieldOfView / 2f))
             {
                 // If the player was the thing we hit
                 return hit.collider.gameObject.CompareTag("Player");
@@ -167,6 +159,24 @@ public class Robot : Agent
 
         // TODO: Why is this not false?!
         return false;
+    }
+
+    private bool ShouldChasePlayer()
+    {
+        // Should chase the player if they are holding an artifact
+        return GameManager.instance.player.heldArtifact != null;
+    }
+
+
+    private void IdleUpdate()
+    {
+        // Can the robot see the player
+        if (CanSeePlayer() && !playerDetected)
+        {
+            // Go to the detecting player state
+            GotoState(State.DetectingPlayer);
+            return;
+        }
     }
 
     private void DetectingPlayerUpdate() 
@@ -181,8 +191,22 @@ public class Robot : Agent
         // If the player has been fully detected
         if(timeLeftUntilDetected <= 0)
         {
-            // Go to the chasing state
-            GotoState(State.ChasingPlayer);
+            // Handle the player being detected
+            OnPlayerDetected();
+
+            // Should we chase the player?
+            if (ShouldChasePlayer())
+            {
+                // Go to the chasing state
+                GotoState(State.ChasingPlayer);
+                return;
+            }
+            else
+            {
+                // Go back to the idle state
+                GotoState(State.Idle);
+                return;
+            }
         }
 
         // If the robot lost sight of the player
@@ -190,8 +214,10 @@ public class Robot : Agent
         {
             // Go back to the idle state
             GotoState(State.Idle);
+            return;
         }
     }
+
     private void ChasingPlayerUpdate()
     {
         // Set the robot's destination to the player's position 
@@ -207,6 +233,7 @@ public class Robot : Agent
 
             // Go to the player's last known location state
             GotoState(State.MoveToLastKnownPlayerPosition);
+            return;
         }
     }
 
@@ -217,6 +244,7 @@ public class Robot : Agent
         {
             // Go to the looking around for player state
             GotoState(State.LookingForPlayer);
+            return;
         }
 
         // If the player was spotted again
@@ -224,6 +252,7 @@ public class Robot : Agent
         {
             // Resume the chase
             GotoState(State.ChasingPlayer);
+            return;
         }
     }
 
@@ -237,6 +266,7 @@ public class Robot : Agent
         {
             // Go to the returning home state
             GotoState(State.ReturningHome);
+            return;
         }
 
         // If the robot sees the player again
@@ -244,6 +274,7 @@ public class Robot : Agent
         {
             // Resume the chase
             GotoState(State.ChasingPlayer);
+            return;
         }
     }
 
@@ -254,6 +285,7 @@ public class Robot : Agent
         {
             // Go to idle state
             GotoState(State.Idle);
+            return;
         }
 
         // If the player was spotted again
@@ -261,6 +293,16 @@ public class Robot : Agent
         {
             // Resume the chase
             GotoState(State.ChasingPlayer);
+            return;
         }
+    }
+    private void OnPlayerDetected()
+    {
+        playerDetected = true;
+    }
+
+    private void OnPlayerUndetected()
+    {
+        playerDetected = false;
     }
 }

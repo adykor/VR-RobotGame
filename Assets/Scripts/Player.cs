@@ -5,13 +5,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public Transform hands;
-    private Artifact heldArtifact;
+    public Artifact heldArtifact;
 
     private void OnCollisionEnter(Collision collision)
     {
         // If the thing we touched is an artifact
         var artifact = collision.collider.GetComponent<Artifact>();
-        if(artifact != null)
+        if(artifact != null && !artifact.stashed)
         {
             // Pick up the artifact
             artifact.OnPickedUp(hands);
@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
             heldArtifact = null;
 
             // Let the game know an artifact was stashed
+            GameManager.OnArtifactStashed();
         }
     }
 

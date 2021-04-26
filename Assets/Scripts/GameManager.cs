@@ -6,7 +6,8 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager instance; // can be called singleton
+    public static GameManager instance;
+    public Player player;
 
     private void Awake()
     {
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
     internal static void OnArtifactStashed()
     {
         // If all of the artifacts are stashed
-        if(FindObjectOfType<Artifact>().All(artifact => artifact.stashed))
+        if (FindObjectOfType<Artifact>().All((artifact) => { artifact.stashed}))
         {
             // You win
             GameOver();
