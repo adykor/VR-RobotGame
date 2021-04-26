@@ -91,9 +91,15 @@ public class Robot : Agent
             case State.GrabbingArtifact:
                 // Play the walking animation
                 animator.SetBool("Walking", true);
-
                 // Move toward the artifact
                 navAgent.SetDestination(targetArtifact.transform.position);
+                break;
+            case State.ReturningArtifact:
+                // Play the walking animation
+                animator.SetBool("Walking", true);
+
+                // Move toward the artifact's home
+                navAgent.SetDestination(targetArtifact.homePosition);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -121,6 +127,8 @@ public class Robot : Agent
             case State.ReturningHome:
                 break;
             case State.GrabbingArtifact:
+                break;
+            case State.ReturningArtifact:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -152,6 +160,9 @@ public class Robot : Agent
                 break;
             case State.GrabbingArtifact:
                 GrabbingArtifactUpdate();
+                break;
+            case State.ReturningArtifact:
+                ReturningArtifactUpdate();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(currentState), currentState, null);
@@ -335,10 +346,29 @@ public class Robot : Agent
         }
     }
 
+
     private void GrabbingArtifactUpdate()
     {
         // Keep moving towards the target artifact
         navAgent.SetDestination(targetArtifact.transform.position);
+
+        // TODO: Handle the artifact being stashed 
+        // TODO: Has the player picked up the artifact again
+    }
+
+    private void ReturningArtifactUpdate()
+    {
+        // If we've reached the artifact's home 
+        if(navAgent.remainingDistance <= stoppedDistance)
+        {
+            // Drop the artifact
+            heldArtifact.OnDropped();
+            heldArtifact = null;
+
+            // Go to the returning home state
+            GotoState(State.ReturningHome);
+            return;
+        }
     }
     private void OnPlayerDetected()
     {

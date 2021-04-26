@@ -16,6 +16,8 @@ public class Agent : MonoBehaviour
         MoveToLastKnownPlayerPosition,
         LookingForPlayer,
         ReturningHome,
+        GrabbingArtifact,
+        ReturningArtifact,
     }
 
     protected void GotoState(State newState)

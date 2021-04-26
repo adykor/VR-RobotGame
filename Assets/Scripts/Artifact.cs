@@ -12,6 +12,7 @@ public class Artifact : MonoBehaviour
     private void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        homePosition = transform.position;
     }
     internal void OnPickedUp(Transform hands)
     {
