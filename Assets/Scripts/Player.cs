@@ -2,17 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
     public Transform hands;
     public Artifact heldArtifact;
+    public float stunnedDuration;
 
+    private bool stunned;
+    private float timeLeftStunned;
+    private NavMeshAgent navAgent;
+
+    private void Start()
+    {
+        navAgent = GetComponent<NavMeshAgent>();
+    }
     private void OnCollisionEnter(Collision collision)
     {
         // If the thing we touched is an artifact
         var artifact = collision.collider.GetComponent<Artifact>();
-        if(artifact != null && !artifact.stashed)
+        if(artifact != null && !artifact.stashed && !stunned)
         {
             // Pick up the artifact
             artifact.OnPickedUp(hands);
@@ -52,10 +62,35 @@ public class Player : MonoBehaviour
 
             // TODO: Throw the artifact?
         }
+
+        // If we're stunned
+        if (stunned)
+        {
+            timeLeftStunned -= Time.deltaTime;
+            if(timeLeftStunned <= 0f)
+            {
+                stunned = false;
+            }
+
+            // Prevent the player fro moving
+            navAgent.ResetPath();
+            navAgent.isStopped = true;
+        }
+        else
+        {
+            navAgent.isStopped = false;
+        }
     }
 
     internal void OnStunned()
     {
-        throw new NotImplementedException();
+        // Flag the player as stunned
+        stunned = true;
+
+        // Drop the artifact if we're holding one
+        heldArtifact?.OnDropped();
+
+        // Start the stunned countdown
+        timeLeftStunned = stunnedDuration; 
     }
 }

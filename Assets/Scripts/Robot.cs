@@ -238,6 +238,8 @@ public class Robot : Agent
             // Stun the player
             GameManager.Player.OnStunned();
 
+            // TODO: What if the player drops the artifact?
+
             // Go to the grabbing artifact state
             GotoState(State.GrabbingArtifact);
             return;
