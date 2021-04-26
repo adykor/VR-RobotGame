@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Player player;
 
+    public static Player Player => instance.player;
+
     private void Awake()
     {
         // Are there any other game managers yet?

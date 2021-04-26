@@ -16,6 +16,8 @@ public class Robot : Agent
     public float fieldOfView;
     public float stoppedDistance;
     public float returnHomeTime;
+    public GameObject detectedIndicator;
+    public float stunningDistance;
 
     private Animator animator;
     private NavMeshAgent navAgent;
@@ -24,6 +26,7 @@ public class Robot : Agent
     private float timeLeftUntilReturnHome;
     private Vector3 homePosition;
     private bool playerDetected;
+    
 
     private void Start()
     {
@@ -47,7 +50,6 @@ public class Robot : Agent
             case State.Idle:
                 // Stop the walking animation
                 animator.SetBool("Walking", false);
-
                 break;
             case State.DetectingPlayer:
                 // TODO: Have the robot look at the player with their head
@@ -164,18 +166,25 @@ public class Robot : Agent
     private bool ShouldChasePlayer()
     {
         // Should chase the player if they are holding an artifact
-        return GameManager.instance.player.heldArtifact != null;
+        return GameManager.Player.heldArtifact != null;
     }
 
 
     private void IdleUpdate()
     {
-        // Can the robot see the player
+        // If the robot sees a player that wasn't detected alredy
         if (CanSeePlayer() && !playerDetected)
         {
             // Go to the detecting player state
             GotoState(State.DetectingPlayer);
             return;
+        }
+
+        // If the robot can't see the player but they were detected
+        if(!CanSeePlayer() && playerDetected)
+        {
+            // Flag the player as undetected
+            OnPlayerUndetected();
         }
     }
 
@@ -223,7 +232,16 @@ public class Robot : Agent
         // Set the robot's destination to the player's position 
         navAgent.SetDestination(player.position);
 
-        // TODO: What do we do if we catch the player while in the ChasingPlayer state?
+        // If the robot is close enough to the player
+        if(navAgent.remainingDistance <= stunningDistance)
+        {
+            // Stun the player
+            GameManager.Player.OnStunned();
+
+            // Go to the grabbing artifact state
+            GotoState(State.GrabbingArtifact);
+            return;
+        }
 
         // If the robot loses sight of the player
         if(!CanSeePlayer())
@@ -299,10 +317,16 @@ public class Robot : Agent
     private void OnPlayerDetected()
     {
         playerDetected = true;
+
+        // Show the detection indicator
+        detectedIndicator.SetActive(true);
     }
 
     private void OnPlayerUndetected()
     {
         playerDetected = false;
+
+        // Hide the detection indicator
+        detectedIndicator.SetActive(false);
     }
 }

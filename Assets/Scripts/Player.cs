@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,5 +52,10 @@ public class Player : MonoBehaviour
 
             // TODO: Throw the artifact?
         }
+    }
+
+    internal void OnStunned()
+    {
+        throw new NotImplementedException();
     }
 }
