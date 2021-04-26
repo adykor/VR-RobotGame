@@ -18,6 +18,7 @@ public class Robot : Agent
     public float returnHomeTime;
     public GameObject detectedIndicator;
     public float stunningDistance;
+    public Transform hands;
 
     private Animator animator;
     private NavMeshAgent navAgent;
@@ -26,6 +27,8 @@ public class Robot : Agent
     private float timeLeftUntilReturnHome;
     private Vector3 homePosition;
     private bool playerDetected;
+    private Artifact targetArtifact;
+    private Artifact heldArtifact;
     
 
     private void Start()
@@ -85,6 +88,13 @@ public class Robot : Agent
                 // Move back home
                 navAgent.SetDestination(homePosition);
                 break;
+            case State.GrabbingArtifact:
+                // Play the walking animation
+                animator.SetBool("Walking", true);
+
+                // Move toward the artifact
+                navAgent.SetDestination(targetArtifact.transform.position);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
@@ -109,6 +119,8 @@ public class Robot : Agent
             case State.LookingForPlayer:
                 break;
             case State.ReturningHome:
+                break;
+            case State.GrabbingArtifact:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -137,6 +149,9 @@ public class Robot : Agent
                 break;
             case State.ReturningHome:
                 ReturningHomeUpdate();
+                break;
+            case State.GrabbingArtifact:
+                GrabbingArtifactUpdate();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(currentState), currentState, null);
@@ -206,6 +221,9 @@ public class Robot : Agent
             // Should we chase the player?
             if (ShouldChasePlayer())
             {
+                // Store the artifact we're trying to recover
+                targetArtifact = GameManager.Player.heldArtifact;
+
                 // Go to the chasing state
                 GotoState(State.ChasingPlayer);
                 return;
@@ -233,7 +251,7 @@ public class Robot : Agent
         navAgent.SetDestination(player.position);
 
         // If the robot is close enough to the player
-        if(navAgent.remainingDistance <= stunningDistance)
+        if(Vector3.Distance(transform.position, GameManager.Player.transform.position) <= stunningDistance)
         {
             // Stun the player
             GameManager.Player.OnStunned();
@@ -316,6 +334,12 @@ public class Robot : Agent
             return;
         }
     }
+
+    private void GrabbingArtifactUpdate()
+    {
+        // Keep moving towards the target artifact
+        navAgent.SetDestination(targetArtifact.transform.position);
+    }
     private void OnPlayerDetected()
     {
         playerDetected = true;
@@ -330,5 +354,20 @@ public class Robot : Agent
 
         // Hide the detection indicator
         detectedIndicator.SetActive(false);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // If the thing we touched is an artifact
+        var artifact = collision.collider.GetComponent<Artifact>();
+        if (artifact != null && !artifact.stashed)
+        {
+            // Pick up the artifact
+            artifact.OnPickedUp(hands);
+
+            // Store the artifact the player is carrying
+            heldArtifact = artifact;
+            targetArtifact = null;
+        }
     }
 }

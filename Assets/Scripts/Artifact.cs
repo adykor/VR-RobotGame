@@ -35,4 +35,9 @@ public class Artifact : MonoBehaviour
     {
         throw new NotImplementedException();
     }
+
+    internal void OnPickedUp(object hands)
+    {
+        throw new NotImplementedException();
+    }
 }
