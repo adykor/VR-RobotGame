@@ -121,6 +121,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 2f30e72b895fc7b48b85ff868bda12f8, type: 2}
+--- !u!1 &171218979 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 171218979, guid: d6823a4a659b9b44f9611288d739df23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1958728767623597300}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &613769059
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d427d1f8b3d48d64aab3b0e5a302841f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  artifacts: []
+  player: {fileID: 990571057}
 --- !u!4 &613769061
 Transform:
   m_ObjectHideFlags: 0
@@ -664,6 +670,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hands: {fileID: 1078145394}
+  heldArtifact: {fileID: 0}
+  stunnedDuration: 5
 --- !u!1 &1078145393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1497,6 +1505,16 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 990571053}
+    - target: {fileID: 8296172668157778808, guid: d6823a4a659b9b44f9611288d739df23,
+        type: 3}
+      propertyPath: stunningDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296172668157778808, guid: d6823a4a659b9b44f9611288d739df23,
+        type: 3}
+      propertyPath: detectedIndicator
+      value: 
+      objectReference: {fileID: 171218979}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6823a4a659b9b44f9611288d739df23, type: 3}
 --- !u!1 &8296172668157778807 stripped

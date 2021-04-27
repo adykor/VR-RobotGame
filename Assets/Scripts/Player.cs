@@ -89,6 +89,7 @@ public class Player : MonoBehaviour
 
         // Drop the artifact if we're holding one
         heldArtifact?.OnDropped();
+        heldArtifact = null;
 
         // Start the stunned countdown
         timeLeftStunned = stunnedDuration; 

@@ -28,12 +28,11 @@ public class GameManager : MonoBehaviour
     internal static void OnArtifactStashed()
     {
         // If all of the artifacts are stashed
-        if (FindObjectOfType<Artifact>().All((artifact) => { artifact.stashed}))
+        if (FindObjectsOfType<Artifact>().All(artifact => artifact.stashed))
         {
             // You win
             GameOver();
         }
-
     }
 
     private static void GameOver()

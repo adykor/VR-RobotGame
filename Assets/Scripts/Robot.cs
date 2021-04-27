@@ -99,7 +99,7 @@ public class Robot : Agent
                 animator.SetBool("Walking", true);
 
                 // Move toward the artifact's home
-                navAgent.SetDestination(targetArtifact.homePosition);
+                navAgent.SetDestination(heldArtifact.homePosition);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -337,8 +337,8 @@ public class Robot : Agent
             return;
         }
 
-        // If the player was spotted again
-        if (CanSeePlayer())
+        // If the player was spotted again and we should chase them
+        if (CanSeePlayer() && ShouldChasePlayer())
         {
             // Resume the chase
             GotoState(State.ChasingPlayer);
